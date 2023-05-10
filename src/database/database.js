@@ -1,15 +1,15 @@
+
+
 import pg from "pg";
 import dotenv from "dotenv";
 dotenv.config();
 
 const { Pool } = pg;
 
-const connection = new Pool({
+const connection = {
 
-    connectionString: process.env.DATABASE_URL,
-    
-  });
+  connectionString: process.env.DATABASE_URL,
+};
 
-export const db = connection;
 
-console.log('ok');
+export const db = new Pool(connection);
