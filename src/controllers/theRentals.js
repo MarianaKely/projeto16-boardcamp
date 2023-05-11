@@ -81,4 +81,45 @@ export async function individualRents (req, res) {
 	}
 	
   }
+
+
+
+  export async function RentalConfig (req, res) {
+
+	const { id } = req.params;
+
+	try {
+
+	  const rentalInfo = await db.query( `SELECT rentals.*, games."pricePerDay" FROM rentals JOIN games ON rentals."gameId" = games.id WHERE rentals.id = $1;`,[id] );
+
+	  if (!rentalInfo.rowCount) 
+
+	  return res.sendStatus(404);
+	  console.log('not found');
+
+	  const rentals = rentalInfo.rows[0];
+
+	  if (rentals.returnDate !== null) 
+	  
+	  return res.sendStatus(400);
+	  console.log('invalid');
+  
+	  const returnDate = dayjs().format("YYYY-MM-DD");
+
+	  const week = dayjs(returnDate).diff(dayjs(rentals.rentDate), "day") - rentals.daysRented;
+	  const indebtedness = week > 0 ? week * rentals.pricePerDay : 0;
+  
+	  await db.query (`UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE id = $3`, [returnDate, indebtedness, id]);
+
+	  res.sendStatus(200);
+	  console.log('ok');
+
+	} catch (err) {
+      
+	  console.log('ok');
+	  return res.sendStatus(500);
+
+	}
+
+  }
   
