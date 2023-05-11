@@ -6,8 +6,8 @@ export async function allGames (req, res) {
 
     try {
 
-      const games = await db.query("SELECT * FROM games;");
-      return res.send(games.rows);
+      const gamesList = await db.query("SELECT * FROM games;");
+      return res.send(gamesList.rows);
 
     } catch (err) {
 
@@ -24,9 +24,9 @@ export async function allGames (req, res) {
 
     try {
 
-      const game = await db.query(`SELECT * FROM games WHERE name = $1;`, [name]);
+      const mainGame = await db.query(`SELECT * FROM games WHERE name = $1;`, [name]);
 
-      if (game.rows.length) return res.sendStatus(409);
+      if (mainGame.rows.length) return res.sendStatus(409);
       console.log('invalid');
 
       await db.query(`INSERT INTO games ("name", "image", "stockTotal", "pricePerDay") VALUES ($1, $2, $3, $4);`,
