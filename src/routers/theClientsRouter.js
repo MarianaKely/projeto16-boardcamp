@@ -1,6 +1,6 @@
 
 import { Router } from "express";
-import theClientsSchema from "../schemas/joi.js";
+import theClientsSchema from "../schemas/joiClients.js";
 import middlewareSchema from "../middlewares/middleware.js";
 import { allClients , individualClient , clientProfile , changeClientInfo } from "../controllers/theClients.js";
 

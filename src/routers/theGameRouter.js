@@ -1,6 +1,6 @@
 
 import { Router } from "express";
-import theGamesSchema from "../schemas/joi.js";
+import theGamesSchema from "../schemas/joiGames.js";
 import middlewareSchema from "../middlewares/middleware.js";
 import { allGames , individualGame } from "../controllers/theGame.js";
 
