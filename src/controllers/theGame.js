@@ -2,51 +2,41 @@
 
 import { db } from "../database/database.js";
 
+export async function allGames (req, res) {
 
-export async function allGames(_, res) {
+    try {
 
-	try {
+      const games = await db.query("SELECT * FROM games;");
+      return res.send(games.rows);
 
-		const games = await db.query("SELECT * FROM games");
-		res.send(games.rows);
+    } catch (err) {
 
-	} catch (error) {
+      return res.sendStatus(500);
 
-		res.status(500).send("Internal Error");
-
-	}
-}
-
-export async function individualGame(req, res) {
-
-	const { name, image, stockTotal, pricePerDay } = req.body;
-
-	try {
-
-		const invalid = await db.query(
-
-			`SELECT * FROM games WHERE name = $1`, [name]
-
-		);
-
-		if (invalid.rows.length > 0) {
-
-			return res.status(409).send("Invalid");
-
-		}
-
-		const game = await db.query(
-
-			`INSERT INTO games (name,image,"stockTotal","pricePerDay") VALUES ($1, $2, $3, $4) RETURNING *`, [name, image, stockTotal, pricePerDay]
-
-		);
-
-		res.status(201).send("OK!");
-
-	} catch (err) {
+    }
 
 
-		return res.status(500).send("Internal Error");
+  }
 
-	}
-}
+  export async function individualGame (req, res) {
+
+    const { name, image, stockTotal, pricePerDay } = req.body;
+
+    try {
+
+      const game = await db.query(`SELECT * FROM games WHERE name = $1;`, [name]);
+
+      if (game.rows.length) return res.sendStatus(409);
+      console.log('invalid');
+
+      await db.query(`INSERT INTO games ("name", "image", "stockTotal", "pricePerDay") VALUES ($1, $2, $3, $4);`, [name, image, stockTotal, pricePerDay]);
+
+      return res.sendStatus(201);
+
+    } catch (err) {
+
+        res.sendStatus(500);
+        console.log('ok');
+
+    }
+  }

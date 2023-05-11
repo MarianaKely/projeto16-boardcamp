@@ -1,13 +1,12 @@
 
 import { Router } from "express";
-import { theGamesSchema } from "../schemas/joi.js";
-import { middleware } from "../middlewares/middleware.js";
+import theGamesSchema from "../schemas/joi.js";
+import middlewareSchema from "../middlewares/middleware.js";
 import { allGames , individualGame } from "../controllers/theGame.js";
 
+const theGameRouter = Router();
 
-const theGamesRouter = Router ();
+theGameRouter.get("/games", allGames);
+theGameRouter.post("/games", middlewareSchema(theGamesSchema), individualGame );
 
-theGamesRouter.get('/games' , allGames);
-theGamesRouter.post('games' , middleware(theGamesSchema), individualGame);
-
-export default theGamesRouter;
+export default theGameRouter;

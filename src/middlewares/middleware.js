@@ -1,19 +1,22 @@
 
-export function middleware (parameter) {
+export default function middlewareSchema(schema) {
 
-	return (req, res, next) => {
+    return (req, res, next) => {
 
-		const { invalidMiddleware } = parameter.validate(req.body, { abortEarly: false });
+      const invalidMiddleware = schema.validate(req.body, { abortEarly: false });
 
-		if (invalidMiddleware) {
+      if (invalidMiddleware.error) {
 
-			const eradeInvalidMiddleware = invalidMiddleware.details.map((err) => err.message);
-			return res.status(400).send(eradeInvalidMiddleware);
+        return res.status(400).send(validation.error.details.map((parameter) => parameter.message));
 
-		}
+      }
 
-		next();
+      console.log('internal error');
 
-        console.log('ToNext');
-	};
-}
+      next();
+
+      console.log('ok');
+
+    };
+
+  }
