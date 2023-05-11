@@ -29,7 +29,8 @@ export async function allGames (req, res) {
       if (game.rows.length) return res.sendStatus(409);
       console.log('invalid');
 
-      await db.query(`INSERT INTO games ("name", "image", "stockTotal", "pricePerDay") VALUES ($1, $2, $3, $4);`, [name, image, stockTotal, pricePerDay]);
+      await db.query(`INSERT INTO games ("name", "image", "stockTotal", "pricePerDay") VALUES ($1, $2, $3, $4);`,
+       [name, image, stockTotal, pricePerDay]);
 
       return res.sendStatus(201);
 
