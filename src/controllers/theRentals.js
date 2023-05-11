@@ -25,7 +25,8 @@ export async function allRentals (req, res) {
     return res.send(locate);
 
   } catch (err) {
-
+    
+	console.log('ok');;
     return res.sendStatus(500);
 
   }
@@ -70,7 +71,8 @@ export async function individualRents (req, res) {
 		[customerId, gameId, rentDate, daysRented, originalPrice]
 
 	  );
-
+      
+	  console.log('ok');;
 	  return res.sendStatus(201);
 
 	} catch (err) {
@@ -80,6 +82,37 @@ export async function individualRents (req, res) {
 
 	}
 	
+  }
+
+
+
+  export async function erase (req, res) {
+
+	const { id } = req.params;
+
+	try {
+
+	  const toBeErased = await db.query (`SELECT * FROM rentals WHERE id = $1;`, [id,]);
+
+	  if (!toBeErased.rowCount) 
+
+	  return res.sendStatus(404);
+
+	  const erasedREnt = toBeErased.rows[0];
+
+	  if (erasedREnt.returnDate === null) return res.sendStatus(400);
+
+	  await db.query(`DELETE FROM rentals WHERE id = $1;`, [id]);
+
+	  return res.sendStatus(200);
+
+	} catch (err) {
+      
+	  console.log('ok');;	
+	  return res.sendStatus(500);
+
+	}
+
   }
 
 
@@ -122,4 +155,6 @@ export async function individualRents (req, res) {
 	}
 
   }
+
+
   
