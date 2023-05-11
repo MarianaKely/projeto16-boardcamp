@@ -16,5 +16,5 @@ app.use(theGameRouter);
 app.use(theClientsRouter);
 app.use(theRentalsRouter);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Hi, Its Me!!!`));
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(`Hi, Its Me!!!`));
