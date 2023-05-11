@@ -26,8 +26,59 @@ export async function allRentals (req, res) {
 
   } catch (err) {
 
-    return res.status(500).send(err.message);
+    return res.sendStatus(500);
 
   }
 
+
 }
+
+
+
+export async function individualRents (req, res) {
+
+	const { customerId, gameId, daysRented } = req.body;
+
+	if ( isNaN(Number(customerId)) || isNaN(Number(gameId)) || isNaN(Number(daysRented)) || daysRented <= 0 )
+
+	  return res.sendStatus(400);
+	  console.log('invalid');
+
+	try {
+
+	  const user = await db.query (`SELECT * FROM customers WHERE id = $1;`, [customerId]);
+	  const userGames = await db.query(`SELECT * FROM games WHERE id = $1;`, [gameId,]);
+
+	  if (!user.rowCount || !userGames.rowCount)
+
+		return res.sendStatus(400);
+		console.log('invalid');
+
+	  const game = userGames.rows[0];
+  
+	  const rentalGameId = await db.query (`SELECT * FROM rentals WHERE "gameId" = $1 AND "returnDate" IS NULL`, [game.id]);
+
+	  if (rentalGameId.rowCount === game.stockTotal) 
+	  
+	  return res.sendStatus(400);
+	  console.log('invalid');
+  
+	  const rentDate = dayjs().format("YYYY-MM-DD");
+	  const originalPrice = daysRented * game.pricePerDay;
+  
+	  await db.query (`INSERT INTO rentals ("customerId", "gameId", "rentDate", "daysRented", "originalPrice") VALUES ($1, $2, $3, $4, $5)`,
+		[customerId, gameId, rentDate, daysRented, originalPrice]
+
+	  );
+
+	  return res.sendStatus(201);
+
+	} catch (err) {
+
+		res.sendStatus(500);
+		console.log('ok');
+
+	}
+	
+  }
+  
