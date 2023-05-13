@@ -1,21 +1,6 @@
 
 import { db } from "../database/database.js";
-
-
-export async function allClients (req, res) {
-
-  try {
-
-    const personalClientProfile = await db.query("SELECT * FROM customers;");
-    return res.send(personalClientProfile.rows);
-
-  } catch (err) {
-
-    res.sendStatus(500);
-    console.log('ok');
-
-  }
-}
+import dayjs from "dayjs";
 
 
 export async function individualClient(req, res) {
@@ -24,11 +9,11 @@ export async function individualClient(req, res) {
 
   try {
 
-    const idClient = await db.query(`SELECT * FROM customers WHERE id = $1;`, [ id, ]);
+    const cclient = await db.query(`SELECT * FROM customers WHERE id = $1;`, [ id, ]);
 
-    if (!idClient.rows.length) return res.sendStatus(404);
+    if (!cclient.rows.length) return res.sendStatus(404);
 
-    return res.send(idClient.rows[0]);
+    return res.send(cclient.rows[0]);
 
   } catch (err) {
 
@@ -93,5 +78,32 @@ export async function clientProfile(req, res) {
     console.log('ok');
 
   }
+
+}
+
+
+export async function allClients(req, res) {
+
+  const {documents} = req.query;
+
+  try {
+
+    const personalClientProfile = documents? await db.query(`SELECT * FROM customers WHERE cpf LIKE $1 || '%';`, [documents]) :
+      await db.query("SELECT * FROM customers;");
+      
+    const myclients = personalClientProfile.rows.map((parameter)=>(
+
+      { ...parameter, dday: dayjs(parameter.dday).format("YYYY-MM-DD"),}
+
+    ));
+
+    return res.send(myclients);
+
+  } catch (err) {
+
+    res.sendStatus(500);
+    console.log('ok');
+
+  } parameter
 
 }
