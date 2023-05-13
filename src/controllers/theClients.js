@@ -1,6 +1,5 @@
 
 import { db } from "../database/database.js";
-import dayjs from "dayjs";
 
 
 export async function individualClient(req, res) {
@@ -81,29 +80,18 @@ export async function clientProfile(req, res) {
 
 }
 
-
-export async function allClients(req, res) {
-
-  const {documents} = req.query;
+export async function allClients (req, res) {
 
   try {
 
-    const personalClientProfile = documents? await db.query(`SELECT * FROM customers WHERE cpf LIKE $1 || '%';`, [documents]) :
-      await db.query("SELECT * FROM customers;");
-      
-    const myclients = personalClientProfile.rows.map((parameter)=>(
-
-      { ...parameter, dday: dayjs(parameter.dday).format("YYYY-MM-DD"),}
-
-    ));
-
-    return res.send(myclients);
+    const personalClientProfile = await db.query("SELECT * FROM customers;");
+    return res.send(personalClientProfile.rows);
 
   } catch (err) {
 
     res.sendStatus(500);
     console.log('ok');
 
-  } parameter
-
+  }
+  
 }
